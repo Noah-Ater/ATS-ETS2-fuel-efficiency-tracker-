@@ -1,0 +1,48 @@
+# Changelog — Trip Computer
+
+All notable changes to this project are documented here.  
+Versioning follows [Semantic Versioning](https://semver.org/) from v1.36.0 onward.
+
+---
+
+## v1.36.4
+- **Submit button hardening.** Added a CSS comment documenting the form layout constraint (no `position:absolute` on interactive elements). Added an on-load integrity check using `elementFromPoint` that fires the error banner immediately if anything is covering the button, naming the culprit element.
+
+## v1.36.3
+- **ATS cargo weight lbs↔tons toggle.** ATS displays cargo weight in lbs on the delivery screen, so requiring manual ÷2000 conversion was unnecessary friction. The mass field now has a clickable lbs/tons toggle button (ATS only; ETS2 uses tonnes throughout and its toggle is disabled). Mass is always stored internally in tons so all ton-mile calculations, KPI averages, and CSV export remain consistent regardless of input unit chosen. Toggle resets to tons on tab switch to prevent unit state bleeding between games.
+
+## v1.36.2
+- **Optional cargo weight input** (tons in ATS, tonnes in ETS2). When weight is entered, the KPI strip gains a 5th tile showing average ton-mile (MPG/ton) or tonne-km (L/100km·t) efficiency across weighted jobs in the current view. The history log shows the per-job ton-mile figure beneath the main reading. SVG chart hover tooltips include the weighted figure. Weight flows through CSV export (new "Cargo Mass" and "Mass Unit" columns) and import (backward-compatible with older files that lack it). Jobs with no weight entered are excluded from ton-mile calculations without affecting MPG/L/100km data.
+
+## v1.36.1
+- **Fleet tagging & filtering.** Added an optional "Truck Model / Trip Tag" field to the logging form (sanitized: newlines stripped, whitespace collapsed, capped at 40 chars). Added a row of filter pills above the chart built from the unique tags in the current tab's data — clicking one re-renders the KPIs, chart, and history log against just that filtered subset, including recalculated delta badges scoped to that truck's own trend. Tag flows through CSV export/import (new "Truck/Tag" column, backward-compatible with older files). All user-supplied tag text is HTML/XML-escaped before being injected into the log, filter pills, or SVG tooltips.
+
+## v1.36.0
+- **Switched to semantic versioning** (MAJOR.MINOR.PATCH). The old ad-hoc scheme (v1.3 → v1.31 → v1.32...) had no consistent place-value meaning. From here: PATCH = bug fixes only, MINOR = new backward-compatible features, MAJOR = breaking changes (e.g. a change to the saved data format or CSV schema).
+
+## v1.35
+- **CSV import.** Made CSV round-trippable — parses quoted fields properly (RFC 4180), validates each row, recalculates efficiency from source data rather than trusting the file's numbers, skips exact duplicates (safe to re-import the same export twice), and re-sorts each game's log chronologically so delta badges stay correct after import.
+
+## v1.34
+- **CSV export.** Downloads every logged ATS and ETS2 job — game, date, distance, fuel, and calculated efficiency — as a single dated `.csv` file. Opens cleanly in Excel, Sheets, and Numbers. A local backup independent of the HTML file.
+
+## v1.33
+- **Fixed silent form submission failure.** Strict HTML5 `step` validation on the distance/fuel inputs could silently block submission for high-precision values (e.g. 847.35 mi) with only an easy-to-miss native browser tooltip. Native validation is now fully disabled (`novalidate`) in favour of explicit JS validation that always shows a clear on-page message via the error banner.
+
+## v1.32
+- **Top-level fatal error catch.** Wrapped the entire script in a top-level try/catch. If anything throws during startup — before the Log Job button's listener is even attached — it now shows a visible fatal-error box on the page instead of silently doing nothing.
+
+## v1.31
+- **Removed Chart.js CDN dependency entirely.** The trend graph is now a hand-built inline SVG generated from logged data — zero external requests, fully offline, and no longer blockable by a firewall, ad-blocker, or flaky connection.
+
+## v1.3
+- **On-page error banner.** Catches JS errors and surfaces them directly in the UI with a Copy button — no dev tools required to see what went wrong.
+
+## v1.2
+- Removed fragile dynamic-script CDN fallback. Wrapped the submit handler in try/catch so a job can never fail to log silently. Added version tag to the UI.
+
+## v1.1
+- Fixed: a Chart.js render failure could throw before the history log and KPIs rendered, leaving them blank. Each render step is now isolated so one failure can't cascade.
+
+## v1.0
+- Initial build: ATS/ETS2 tabs, MPG & L/100km calculation, delta badges, Chart.js trend line, localStorage persistence, gauge-cluster UI.

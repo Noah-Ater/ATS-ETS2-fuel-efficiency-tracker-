@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 Versioning follows [Semantic Versioning](https://semver.org/) from v1.36.0 onward.
 
 ---
+## v1.37.0 
+- **Log entry deletion.** Added the ability to delete individual entries without having to clear the entire log. 
 
 ## v1.36.4
 - **Submit button hardening.** Added a CSS comment documenting the form layout constraint (no `position:absolute` on interactive elements). Added an on-load integrity check using `elementFromPoint` that fires the error banner immediately if anything is covering the button, naming the culprit element.
